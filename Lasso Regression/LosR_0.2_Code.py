@@ -60,7 +60,6 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import classification_report
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 cm = confusion_matrix(y_test, y_pred_class)
 
@@ -85,14 +84,3 @@ print("\nClassification Report:\n")
 
 print(classification_report(y_test, y_pred_class, zero_division=0))
 
-print("\nMean Squared Error : {:.6f}".format(
-    mean_squared_error(y_test, y_pred)
-))
-
-print("\nMean Absolute Error : {:.6f}".format(
-    mean_absolute_error(y_test, y_pred)
-))
-
-print("\nR2 Score : {:.6f}".format(
-    r2_score(y_test, y_pred)
-))
