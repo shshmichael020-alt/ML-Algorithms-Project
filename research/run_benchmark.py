@@ -148,15 +148,29 @@ def safe_filename(name: str) -> str:
 
 def save_confusion_matrix(
     matrix: np.ndarray, class_names: list[str], model_name: str,
-    test_size: float, output_path: Path,
+    test_size: float, output_path: Path, normalized: bool = False,
 ) -> None:
     # Label names can be numerous and long; choose a proportional figure height.
     size = max(8, min(20, 0.48 * len(class_names) + 4))
+    if normalized:
+        row_totals = matrix.sum(axis=1, keepdims=True)
+        plot_matrix = np.divide(
+            matrix.astype(float), row_totals,
+            out=np.zeros_like(matrix, dtype=float), where=row_totals != 0,
+        )
+        colorbar_label = "Proportion within true class"
+        title_prefix = "Row-normalized Confusion Matrix"
+    else:
+        plot_matrix = matrix
+        colorbar_label = "Number of flows"
+        title_prefix = "Confusion Matrix"
+
     fig, ax = plt.subplots(figsize=(size, size * 0.82), constrained_layout=True)
-    image = ax.imshow(matrix, interpolation="nearest", aspect="auto")
-    fig.colorbar(image, ax=ax, shrink=0.8, label="Number of flows")
+    image = ax.imshow(plot_matrix, interpolation="nearest", aspect="auto",
+                      vmin=0, vmax=1 if normalized else None)
+    fig.colorbar(image, ax=ax, shrink=0.8, label=colorbar_label)
     ax.set(
-        title=f"Confusion Matrix — {model_name} (test={test_size:.0%})",
+        title=f"{title_prefix} — {model_name} (test={test_size:.0%})",
         xlabel="Predicted class",
         ylabel="True class",
         xticks=np.arange(len(class_names)),
@@ -165,12 +179,13 @@ def save_confusion_matrix(
     ax.set_xticklabels(class_names, rotation=90, fontsize=7)
     ax.set_yticklabels(class_names, fontsize=7)
     if len(class_names) <= 15:
-        threshold = matrix.max() / 2 if matrix.size else 0
-        for i in range(matrix.shape[0]):
-            for j in range(matrix.shape[1]):
+        threshold = plot_matrix.max() / 2 if plot_matrix.size else 0
+        for i in range(plot_matrix.shape[0]):
+            for j in range(plot_matrix.shape[1]):
+                label = f"{plot_matrix[i, j]:.0%}" if normalized else f"{matrix[i, j]:,}"
                 ax.text(
-                    j, i, f"{matrix[i, j]:,}", ha="center", va="center",
-                    fontsize=6, color="white" if matrix[i, j] > threshold else "black",
+                    j, i, label, ha="center", va="center",
+                    fontsize=6, color="white" if plot_matrix[i, j] > threshold else "black",
                 )
     fig.savefig(output_path, dpi=220, bbox_inches="tight")
     plt.close(fig)
@@ -299,6 +314,11 @@ def main() -> None:
         save_confusion_matrix(
             cm, class_names, name, args.test_size,
             output_dir / f"{file_stem}_confusion_matrix_test_{args.test_size:.1f}.png",
+        )
+        save_confusion_matrix(
+            cm, class_names, name, args.test_size,
+            output_dir / f"{file_stem}_normalized_confusion_matrix_test_{args.test_size:.1f}.png",
+            normalized=True,
         )
         rows.append({key: value for key, value in metrics.items()
                      if key not in {"confusion_matrix", "classification_report"}})
