@@ -5,7 +5,7 @@ This folder adds a leakage-safe, reproducible multiclass classification benchmar
 ## Three issues addressed
 
 1. **Model attribution:** The historical files `Linear Regression/LR_0.2_Code.py` and `LR_0.4_Code.py` actually call `LogisticRegression`. The historical 60% file fits both `SGDClassifier` and `LogisticRegression`. Those numbers should not be presented as verified linear-regression results. The new pipeline emits each model under its actual estimator name.
-2. **Preprocessing leakage:** Median imputation and scaling are in a scikit-learn `Pipeline`. They are fitted on training rows only; the test rows are transformed with training-fitted values.
+2. **Preprocessing leakage:** Median imputation and scaling are in a scikit-learn `Pipeline`. They are fitted on training rows only; the test rows are transformed with training-fitted values. Features with no observations in the training split are removed based on training rows only, then removed from the test matrix as well.
 3. **Regression-to-class conversion:** This benchmark predicts categorical labels directly. It does not round or clip outputs from regression estimators into encoded attack labels. `RidgeClassifier` is a classifier, not ridge regression with rounded class IDs.
 
 ## Run
