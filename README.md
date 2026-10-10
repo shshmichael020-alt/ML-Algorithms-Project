@@ -4,7 +4,7 @@
 >
 > The corrected pipeline is for **multiclass classification**, predicts categories directly, fits preprocessing using training rows only, records data/software metadata, and creates metric CSV/JSON and PNG figures. It has not been run on the real local CSV dataset as of this notice. A successful synthetic test is not proof of real-dataset benchmark validation.
 >
-> **For new publication figures, you must rerun `research/run_benchmark.py` on the actual CSV files.** The expected seven PNGs and exact PowerShell commands are in [research/README.md](research/README.md).
+> **For new publication figures, you must rerun `research/run_benchmark.py` on the actual CSV files.** The expected twelve PNGs and exact PowerShell commands are in [research/README.md](research/README.md).
 >
 > ---
 >
