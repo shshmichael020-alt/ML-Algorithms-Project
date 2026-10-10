@@ -109,7 +109,9 @@ class BenchmarkPipelineTests(unittest.TestCase):
                 self.assertTrue(summary[metric].between(0, 1).all(), metric)
 
             metadata = json.loads((output_dir / "metadata_test_0.2.json").read_text())
-            self.assertEqual(metadata["nonsense"] if "nonsense" in metadata else "ok", "ok")
+            self.assertEqual(metadata["input_rows_after_target_filter"], 90)
+            self.assertEqual(metadata["train_rows"], 72)
+            self.assertEqual(metadata["test_rows"], 18)
             self.assertIn("Entirely Empty Feature", metadata["features_dropped_all_missing_in_training"])
             self.assertEqual(len(metadata["input_files"]), 3)
             self.assertEqual(len(metadata["input_files"][0]["sha256"]), 64)
