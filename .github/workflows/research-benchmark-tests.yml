@@ -1,0 +1,37 @@
+name: Research benchmark tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "research/**"
+      - "tests/**"
+      - ".github/workflows/research-benchmark-tests.yml"
+      - "requirements.txt"
+  pull_request:
+    paths:
+      - "research/**"
+      - "tests/**"
+      - ".github/workflows/research-benchmark-tests.yml"
+      - "requirements.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run benchmark unit and synthetic end-to-end tests
+        run: python -m unittest discover -s tests -v
