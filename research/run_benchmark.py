@@ -116,17 +116,17 @@ def make_pipeline(name: str, seed: int) -> Pipeline:
     ]
     if name == "Logistic Regression (L2)":
         model = LogisticRegression(
-            penalty="l2", solver="lbfgs", max_iter=5000,
+            solver="lbfgs", max_iter=5000,
             random_state=seed, class_weight="balanced",
         )
     elif name == "Logistic Regression (L1)":
         model = LogisticRegression(
-            penalty="l1", solver="saga", max_iter=5000,
+            l1_ratio=1.0, solver="saga", max_iter=5000,
             random_state=seed, class_weight="balanced",
         )
     elif name == "Logistic Regression (Elastic Net)":
         model = LogisticRegression(
-            penalty="elasticnet", l1_ratio=0.5, solver="saga", max_iter=5000,
+            l1_ratio=0.5, solver="saga", max_iter=5000,
             random_state=seed, class_weight="balanced",
         )
     elif name == "Ridge Classifier":
