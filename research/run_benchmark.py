@@ -63,18 +63,29 @@ def prepare_data(df: pd.DataFrame, target: str):
 
 def make_pipeline(name: str, seed: int) -> Pipeline:
     # These transformers are fitted only when pipe.fit(X_train, y_train) runs.
-    steps = [("imputer", SimpleImputer(strategy="median"))]
-    if name in {"Logistic Regression", "SGD Classifier", "Ridge Classifier"}:
-        steps.append(("scaler", StandardScaler()))
-    if name == "Logistic Regression":
-        model = LogisticRegression(max_iter=3000, random_state=seed)
-    elif name == "SGD Classifier":
-        model = SGDClassifier(
-            loss="log_loss", max_iter=2000, tol=1e-3,
+    steps = [("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
+    if name == "Logistic Regression (L2)":
+        model = LogisticRegression(
+            penalty="l2", solver="lbfgs", max_iter=5000,
+            random_state=seed, class_weight="balanced",
+        )
+    elif name == "Logistic Regression (L1)":
+        model = LogisticRegression(
+            penalty="l1", solver="saga", max_iter=5000,
+            random_state=seed, class_weight="balanced",
+        )
+    elif name == "Logistic Regression (Elastic Net)":
+        model = LogisticRegression(
+            penalty="elasticnet", l1_ratio=0.5, solver="saga", max_iter=5000,
             random_state=seed, class_weight="balanced",
         )
     elif name == "Ridge Classifier":
         model = RidgeClassifier(class_weight="balanced")
+    elif name == "SGD Classifier (log-loss, L2)":
+        model = SGDClassifier(
+            loss="log_loss", penalty="l2", max_iter=3000, tol=1e-3,
+            random_state=seed, class_weight="balanced",
+        )
     else:
         raise ValueError(f"Unknown model: {name}")
     steps.append(("model", model))
@@ -121,7 +132,13 @@ def main():
         raise ValueError("All feature columns are entirely missing in the training split.")
 
     class_ids = np.arange(len(encoder.classes_))
-    model_names = ["Logistic Regression", "SGD Classifier", "Ridge Classifier"]
+    model_names = [
+        "Logistic Regression (L2)",
+        "Logistic Regression (L1)",
+        "Logistic Regression (Elastic Net)",
+        "Ridge Classifier",
+        "SGD Classifier (log-loss, L2)",
+    ]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     rows = []
 
