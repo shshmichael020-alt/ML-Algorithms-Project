@@ -50,16 +50,15 @@ def prepare_data(df: pd.DataFrame, target: str):
 
     X = df.drop(columns=[target]).apply(pd.to_numeric, errors="coerce")
     X = X.replace([np.inf, -np.inf], np.nan)
-    all_missing = X.columns[X.isna().all()].tolist()
-    if all_missing:
-        print("Dropping entirely missing/non-numeric columns:", all_missing)
-        X = X.drop(columns=all_missing)
+    # Do not choose/drop columns using the complete dataset. Missingness is
+    # evaluated on the training split below to avoid even unsupervised test
+    # information influencing feature selection.
     if X.shape[1] == 0:
         raise ValueError("No numeric feature columns remain.")
 
     encoder = LabelEncoder()
     y = encoder.fit_transform(labels)
-    return X, y, encoder, all_missing
+    return X, y, encoder
 
 
 def make_pipeline(name: str, seed: int) -> Pipeline:
@@ -94,7 +93,7 @@ def main():
 
     df = load_data(args.data_dir, args.files)
     print(f"Loaded {len(df):,} rows × {len(df.columns):,} columns")
-    X, y, encoder, dropped = prepare_data(df, args.target_column)
+    X, y, encoder = prepare_data(df, args.target_column)
     counts = pd.Series(y).value_counts()
     if counts.min() < 2:
         rare_ids = counts[counts < 2].index.to_numpy()
@@ -110,6 +109,16 @@ def main():
     missing_train = sorted(set(y_test) - set(y_train))
     if missing_train:
         raise ValueError(f"Classes missing from training: {encoder.inverse_transform(missing_train).tolist()}")
+
+    # Remove features that have no observed values in TRAINING. The same columns
+    # are removed from test data, even if test contains values for them.
+    train_empty = X_train.columns[X_train.isna().all()].tolist()
+    if train_empty:
+        print("Dropping columns entirely missing in training split:", train_empty)
+        X_train = X_train.drop(columns=train_empty)
+        X_test = X_test.drop(columns=train_empty)
+    if X_train.shape[1] == 0:
+        raise ValueError("All feature columns are entirely missing in the training split.")
 
     class_ids = np.arange(len(encoder.classes_))
     model_names = ["Logistic Regression", "SGD Classifier", "Ridge Classifier"]
@@ -167,7 +176,7 @@ def main():
         "files": args.files, "data_dir": str(args.data_dir),
         "target_column": args.target_column, "test_size": args.test_size,
         "seed": args.seed, "class_names": encoder.classes_.tolist(),
-        "dropped_all_missing_features": dropped,
+        "dropped_features_all_missing_in_training": train_empty,
         "preprocessing": "median imputer and optional scaler fitted inside training-only pipelines",
         "note": "Results must be generated locally because dataset CSVs are not stored in the repository.",
     }
