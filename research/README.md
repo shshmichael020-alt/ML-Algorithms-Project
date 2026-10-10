@@ -18,7 +18,7 @@ Keep historical outputs labelled preliminary. Do not describe their metrics as v
 3. **No numeric-distance assumption between labels.** Models predict categorical classes directly. No regression output is rounded or clipped into target IDs.
 4. **Class-imbalance reporting.** Accuracy, balanced accuracy, weighted precision/recall/F1, macro-F1, per-class reports, and confusion matrices are produced.
 5. **Reproducibility metadata.** The run records input CSV names/sizes/SHA-256 hashes, software versions, run timestamp, seed, target, class counts per split, used feature names, preprocessing choices, and excluded target rows.
-6. **Plots.** The script saves one confusion-matrix PNG per model, one metrics-comparison bar plot, and one macro-F1 comparison plot.
+6. **Plots.** The script saves raw-count and row-normalized confusion-matrix PNGs per model, one metrics-comparison bar plot, and one macro-F1 comparison plot.
 
 ## Exact files to run
 
@@ -64,11 +64,12 @@ For test size 0.2, the output directory is `research/results/` unless changed wi
 - `benchmark_test_0.2.csv` — one row per classifier, containing high-level comparison metrics.
 - `metadata_test_0.2.json` — dataset hashes, software versions, split counts, features, preprocessing, and limitations.
 - `logistic_regression_l2_test_0.2.json`, `logistic_regression_l1_test_0.2.json`, `logistic_regression_elastic_net_test_0.2.json`, `ridge_classifier_test_0.2.json`, `sgd_classifier_log_loss_l2_test_0.2.json` — full model metrics, class report, and confusion matrix.
-- `*_confusion_matrix_test_0.2.png` — five per-model confusion-matrix images.
+- `*_confusion_matrix_test_0.2.png` — five per-model raw-count confusion matrices.
+- `*_normalized_confusion_matrix_test_0.2.png` — five per-model row-normalized confusion matrices, useful for comparing class-level recall despite class imbalance.
 - `model_comparison_test_0.2.png` — grouped comparison of accuracy, balanced accuracy, weighted-F1, and macro-F1.
 - `macro_f1_test_0.2.png` — macro-F1 comparison across classifiers.
 
-There should be seven PNG figures for a successful run: five confusion matrices plus two model-comparison figures. Image readability depends on how many label classes the data contains; the numeric confusion matrices also remain in the JSON reports.
+There should be twelve PNG figures for a successful run: five raw-count confusion matrices, five row-normalized confusion matrices, and two model-comparison figures. Image readability depends on how many label classes the data contains; the numeric confusion matrices also remain in the JSON reports.
 
 ## Test the pipeline before using the real dataset
 
