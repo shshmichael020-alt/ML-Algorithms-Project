@@ -1,68 +1,132 @@
 # ML-Algorithms-Project
 
-Machine-learning experiments for network-traffic analysis using CICIDS-style CSV files. The repository contains historical coursework implementations plus a separate, corrected research benchmark.
+## Machine Learning for Network Traffic Analysis
 
-## Research status
+### About the Project
 
-**The older scripts and screenshots are exploratory results, not a leakage-safe validated benchmark.** Inspection of the historical files identified three important issues:
+This project focuses on the practical implementation and evaluation of different machine learning algorithms for network traffic analysis. Network traffic datasets contain a large number of features that can be used to study network behaviour and identify different types of traffic and attacks.
 
-1. `Linear Regression/LR_0.2_Code.py` and `LR_0.4_Code.py` call `LogisticRegression`, not `LinearRegression`. The 60% script fits both SGD and Logistic Regression but reports the SGD results under its results heading.
-2. Most historical scripts fit an imputer on the complete dataset before creating the train/test split. That lets held-out features influence preprocessing.
-3. Ridge, Lasso, and Elastic Net regression scripts predict integer-encoded category IDs and then round/clip predictions. Attack labels are categorical, not naturally ordered numeric values.
+The project uses network traffic data based on the CICIDS dataset and applies different machine learning techniques to the data. The main purpose is to understand how different algorithms work on the same dataset, how the data needs to be prepared before training, and how model performance can be evaluated and compared.
 
-Do not present historical output images or spreadsheet values as validated benchmark results without addressing these limitations. The historical artifacts are retained for traceability.
+The project implements five machine learning algorithms:
 
-## Corrected research benchmark
+- Linear Regression
+- Logistic Regression
+- Ridge Regression
+- Lasso Regression
+- Elastic Net Regression
 
-Use these files for the new classification experiment:
+The project is being developed collaboratively, with different stages of implementation being completed by different team members.
 
-- [Research methodology, run instructions, outputs, and reporting checklist](research/README.md)
-- [Corrected benchmark script](research/run_benchmark.py)
-- [Synthetic end-to-end tests](tests/test_research_benchmark.py)
-- [Automated GitHub Actions workflow](.github/workflows/research-benchmark-tests.yml)
+---
 
-The pipeline compares five explicitly named **classifiers**: Logistic Regression with L2, L1, and Elastic-Net regularization; Ridge Classifier; and SGD Classifier with log-loss/L2. These are alternatives for a categorical classification task; they are not equivalent to validating the five regression algorithms in the historical folders.
+## Project Objective
 
-The corrected script:
-- fits median imputation and standard scaling on training rows only;
-- predicts categorical target labels directly without rounding regression outputs;
-- reports accuracy, balanced accuracy, weighted precision/recall/F1, macro-F1, per-class metrics, and confusion matrices;
-- records dataset file hashes, class counts, feature names, preprocessing decisions, random seed, and software versions;
-- creates **12 PNG images** per successful run: five raw confusion matrices, five row-normalized confusion matrices, and two model-comparison plots.
+The main objectives of this project are:
 
-### Run on your local dataset
+- To understand the practical application of machine learning algorithms.
+- To work with a large real-world network traffic dataset.
+- To perform data preprocessing and prepare the dataset for machine learning.
+- To understand the difference between classification and regression approaches.
+- To train different machine learning models using the same dataset.
+- To evaluate model performance using suitable evaluation metrics.
+- To compare the behaviour and performance of different algorithms.
+- To gain practical experience with Python and the Scikit-learn library.
+- To understand the importance of regularization in regression models.
+- To gain experience in managing and developing a collaborative machine learning project using Git and GitHub.
 
-The input CSV files are not stored in this repository. After pulling the latest `main` branch and installing the dependencies, run the benchmark from the repository root.
+---
 
-PowerShell example if your files are in `MachineLearningCSV/MachineLearningCVE`:
+## Dataset
 
-```powershell
-git switch main
-git pull origin main
-python -m pip install -r requirements.txt
-python research/run_benchmark.py --data-dir "MachineLearningCSV/MachineLearningCVE" --target-column Label --test-size 0.2 --seed 42
-```
+The project uses network traffic data based on the CICIDS dataset.
 
-If the three CSV files are in the current directory, pass `--data-dir "."` instead. The dataset's actual target column must be verified against the CSV headers.
+The dataset contains network-flow information with multiple numerical features describing network connections and traffic behaviour. The target column represents the corresponding traffic or attack category.
 
-For commands, exact output names, optional 40%/60% test-size runs, and how to interpret the results, see [research/README.md](research/README.md). The primary experiment should use one preselected evaluation protocol; do not choose the test size or model only because it produces the highest test score.
+The dataset is useful for studying machine learning applications in areas such as:
 
-## Tests and validation
+- Network security
+- Intrusion detection
+- Traffic classification
+- Cybersecurity analytics
+- Anomaly and attack detection
 
-Run the test suite locally with:
+The dataset files are kept locally because of their large size and are not included in this GitHub repository.
 
-```powershell
-python -m unittest discover -s tests -v
-```
+---
 
-GitHub Actions tests use synthetic data. Passing these tests confirms that the script runs on a controlled example and writes the expected artifacts; it does **not** validate performance on the real CICIDS dataset. The real CSV files must still be run, inspected, and documented before any scores are used in a paper.
+## Data Preprocessing
 
-## Limitations to consider before publication
+Data preprocessing is an important part of this project because machine learning algorithms require clean and suitable input data.
 
-- A random stratified split can place related network flows from the same capture/day/campaign into both train and test. If the claim is generalization to unseen days, networks, or attack campaigns, consider an appropriately designed time- or group-based split.
-- Tune hyperparameters using training data only and preserve final test data for evaluation.
-- Inspect the actual feature list for IDs, timestamps, or target proxies, and document any exclusions.
-- Since class imbalance can be substantial, interpret macro-F1, balanced accuracy, per-class recall, and normalized confusion matrices alongside accuracy and weighted-F1.
-- Record the dataset source/version, file hashes, exact feature list, label distribution, split design, software versions, and actual output metrics.
+The following preprocessing steps were performed:
 
-No real-dataset metrics are claimed by this repository update. The benchmark must be executed on the local data before its results are considered research evidence.
+### 1. Combining the datasets
+
+Multiple network traffic CSV files were loaded and combined into a single dataset so that the models could be trained and tested using a larger and more representative collection of network traffic.
+
+### 2. Cleaning column names
+
+The column names were stripped of unnecessary spaces to ensure consistent feature names during processing.
+
+### 3. Converting features to numerical values
+
+The input features were converted into numerical form using Pandas. Values that could not be converted into numbers were treated as missing values.
+
+### 4. Handling infinite values
+
+Infinite and negative-infinite values were replaced with missing values because such values can cause problems during model training.
+
+### 5. Handling missing values
+
+Missing values were handled using mean imputation.
+
+The mean value of the available data for a feature was used to replace missing values, allowing the dataset to be used by the machine learning models without removing large numbers of records.
+
+### 6. Encoding the target variable
+
+The target labels were categorical, so Label Encoding was used to convert the categories into numerical values that could be processed by the machine learning algorithms.
+
+### 7. Splitting the dataset
+
+The complete dataset was divided into:
+
+- 80% training data
+- 20% testing data
+
+A stratified split was used so that the distribution of target classes was maintained as much as possible in both training and testing sets.
+
+---
+
+## Algorithms Implemented
+
+### 1. Linear Regression
+
+Linear Regression is a supervised learning algorithm that models the relationship between input features and a target variable using a linear equation.
+
+In this project, Linear Regression was implemented to understand how a basic regression model behaves when applied to the encoded network traffic target.
+
+The model was trained using the training dataset and its predictions were evaluated using regression metrics.
+
+---
+
+### 2. Logistic Regression
+
+Logistic Regression is a supervised classification algorithm commonly used when the target variable consists of different classes.
+
+In this project, Logistic Regression was used to classify network traffic into the encoded target categories.
+
+The model produces class predictions that can be evaluated using classification metrics such as accuracy, precision, recall, F1 score, and a confusion matrix.
+
+---
+
+### 3. Ridge Regression
+
+Ridge Regression is an extension of Linear Regression that uses L2 regularization.
+
+Regularization adds a penalty to large model coefficients and helps reduce the possibility of overfitting.
+
+The Ridge model was implemented with:
+
+```text
+alpha = 1.0

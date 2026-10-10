@@ -1,3 +1,6 @@
+# HISTORICAL FILE: this script uses LogisticRegression, not LinearRegression.
+# Preprocessing was fitted before the split; retained only as a record of the original coursework experiment.
+
 import numpy as np
 import pandas as pd
 

@@ -1,3 +1,6 @@
+# HISTORICAL FILE: this script fits SGDClassifier and LogisticRegression, then reports the SGDClassifier results.
+# It is not a Linear Regression implementation; retained as a record of the original coursework experiment.
+
 import numpy as np
 import pandas as pd
 
