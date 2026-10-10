@@ -20,7 +20,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 DEFAULT_FILES = [
     "Tuesday-WorkingHours.pcap_ISCX.csv",
     "Wednesday-workingHours.pcap_ISCX.csv",
-    "Thursday-WorkingHours-Morning-WebAttacks.csv",
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
 ]
 
 
