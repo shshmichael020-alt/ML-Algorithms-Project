@@ -119,7 +119,7 @@ class BenchmarkPipelineTests(unittest.TestCase):
             self.assertIn("feature_names_used", metadata)
 
             pngs = list(output_dir.glob("*.png"))
-            self.assertEqual(len(pngs), 7, f"Expected 5 confusion matrices + 2 summaries, found {len(pngs)}")
+            self.assertEqual(len(pngs), 12, f"Expected 5 raw + 5 normalized confusion matrices + 2 summaries, found {len(pngs)}")
             self.assertTrue(all(path.stat().st_size > 100 for path in pngs))
             json_reports = list(output_dir.glob("*_test_0.2.json"))
             self.assertEqual(len(json_reports), 6, "Expected five model reports plus run metadata")
