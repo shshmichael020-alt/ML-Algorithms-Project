@@ -1,3 +1,13 @@
+> **Research validity notice (updated October 2026):** The scripts and screenshots originally committed under the regression folders are historical exploratory work, not a leakage-safe validated benchmark. In particular, `Linear Regression/LR_0.2_Code.py` and `LR_0.4_Code.py` train `LogisticRegression`; the 60% script fits two classifiers but prints only the SGD results; preprocessing was fitted before the split; and Ridge/Lasso/Elastic Net regression predictions were rounded/clipped into encoded attack IDs. Do not cite the old results as validated regression or classification benchmark results.
+>
+> **Use the corrected research pipeline for new results:** [Research benchmark documentation](research/README.md) · [Benchmark script](research/run_benchmark.py) · [Synthetic regression tests](tests/test_research_benchmark.py) · [GitHub Actions test workflow](.github/workflows/research-benchmark-tests.yml).
+>
+> The corrected pipeline is for **multiclass classification**, predicts categories directly, fits preprocessing using training rows only, records data/software metadata, and creates metric CSV/JSON and PNG figures. It has not been run on the real local CSV dataset as of this notice. A successful synthetic test is not proof of real-dataset benchmark validation.
+>
+> **For new publication figures, you must rerun `research/run_benchmark.py` on the actual CSV files.** The expected seven PNGs and exact PowerShell commands are in [research/README.md](research/README.md).
+>
+> ---
+>
 # ML-Algorithms-Project
 
 ## Machine Learning for Network Traffic Analysis
