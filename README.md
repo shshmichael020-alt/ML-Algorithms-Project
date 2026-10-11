@@ -1,132 +1,132 @@
-# ML-Algorithms-Project
+# ML Algorithms Project
 
 ## Machine Learning for Network Traffic Analysis
 
-### About the Project
+This project compares machine-learning classifiers on network-flow data based on the CICIDS dataset. Each script loads the same three traffic captures, preprocesses the data, trains a model, and prints classification results.
 
-This project focuses on the practical implementation and evaluation of different machine learning algorithms for network traffic analysis. Network traffic datasets contain a large number of features that can be used to study network behaviour and identify different types of traffic and attacks.
+The project currently includes:
 
-The project uses network traffic data based on the CICIDS dataset and applies different machine learning techniques to the data. The main purpose is to understand how different algorithms work on the same dataset, how the data needs to be prepared before training, and how model performance can be evaluated and compared.
-
-The project implements five machine learning algorithms:
-
-- Linear Regression
 - Logistic Regression
-- Ridge Regression
-- Lasso Regression
-- Elastic Net Regression
+- Linear Regression folder using `SGDClassifier` with log-loss
+- Ridge Regression folder using `RidgeClassifier`
+- Lasso Regression folder using `SGDClassifier` with L1 regularization
+- Elastic Net folder using `SGDClassifier` with elastic-net regularization
 
-The project is being developed collaboratively, with different stages of implementation being completed by different team members.
+Although several folders retain their original regression names for project continuity, the updated implementations evaluate categorical traffic labels as a classification problem. They do not convert continuous regression predictions into class IDs.
 
----
+## Repository Structure
 
-## Project Objective
+Each algorithm folder contains scripts for three train/test splits:
 
-The main objectives of this project are:
+| Script suffix | Training data | Test data |
+| --- | ---: | ---: |
+| `0.2` | 80% | 20% |
+| `0.4` | 60% | 40% |
+| `0.6` | 40% | 60% |
 
-- To understand the practical application of machine learning algorithms.
-- To work with a large real-world network traffic dataset.
-- To perform data preprocessing and prepare the dataset for machine learning.
-- To understand the difference between classification and regression approaches.
-- To train different machine learning models using the same dataset.
-- To evaluate model performance using suitable evaluation metrics.
-- To compare the behaviour and performance of different algorithms.
-- To gain practical experience with Python and the Scikit-learn library.
-- To understand the importance of regularization in regression models.
-- To gain experience in managing and developing a collaborative machine learning project using Git and GitHub.
+Each folder also contains two PNG output images for each split. The workbook [Output of All ML Algo.xlsx](Output%20of%20All%20ML%20Algo.xlsx) contains the consolidated project results.
 
----
+```text
+Elastic Net/          Elastic-net classifier scripts and PNG outputs
+Lasso Regression/     L1-regularized classifier scripts and PNG outputs
+Linear Regression/    SGD log-loss classifier scripts and PNG outputs
+Logistic Regression/  Logistic classifier scripts and PNG outputs
+Ridge Regression/     Ridge classifier scripts and PNG outputs
+Output of All ML Algo.xlsx
+requirements.txt
+```
 
 ## Dataset
 
-The project uses network traffic data based on the CICIDS dataset.
-
-The dataset contains network-flow information with multiple numerical features describing network connections and traffic behaviour. The target column represents the corresponding traffic or attack category.
-
-The dataset is useful for studying machine learning applications in areas such as:
-
-- Network security
-- Intrusion detection
-- Traffic classification
-- Cybersecurity analytics
-- Anomaly and attack detection
-
-The dataset files are kept locally because of their large size and are not included in this GitHub repository.
-
----
-
-## Data Preprocessing
-
-Data preprocessing is an important part of this project because machine learning algorithms require clean and suitable input data.
-
-The following preprocessing steps were performed:
-
-### 1. Combining the datasets
-
-Multiple network traffic CSV files were loaded and combined into a single dataset so that the models could be trained and tested using a larger and more representative collection of network traffic.
-
-### 2. Cleaning column names
-
-The column names were stripped of unnecessary spaces to ensure consistent feature names during processing.
-
-### 3. Converting features to numerical values
-
-The input features were converted into numerical form using Pandas. Values that could not be converted into numbers were treated as missing values.
-
-### 4. Handling infinite values
-
-Infinite and negative-infinite values were replaced with missing values because such values can cause problems during model training.
-
-### 5. Handling missing values
-
-Missing values were handled using mean imputation.
-
-The mean value of the available data for a feature was used to replace missing values, allowing the dataset to be used by the machine learning models without removing large numbers of records.
-
-### 6. Encoding the target variable
-
-The target labels were categorical, so Label Encoding was used to convert the categories into numerical values that could be processed by the machine learning algorithms.
-
-### 7. Splitting the dataset
-
-The complete dataset was divided into:
-
-- 80% training data
-- 20% testing data
-
-A stratified split was used so that the distribution of target classes was maintained as much as possible in both training and testing sets.
-
----
-
-## Algorithms Implemented
-
-### 1. Linear Regression
-
-Linear Regression is a supervised learning algorithm that models the relationship between input features and a target variable using a linear equation.
-
-In this project, Linear Regression was implemented to understand how a basic regression model behaves when applied to the encoded network traffic target.
-
-The model was trained using the training dataset and its predictions were evaluated using regression metrics.
-
----
-
-### 2. Logistic Regression
-
-Logistic Regression is a supervised classification algorithm commonly used when the target variable consists of different classes.
-
-In this project, Logistic Regression was used to classify network traffic into the encoded target categories.
-
-The model produces class predictions that can be evaluated using classification metrics such as accuracy, precision, recall, F1 score, and a confusion matrix.
-
----
-
-### 3. Ridge Regression
-
-Ridge Regression is an extension of Linear Regression that uses L2 regularization.
-
-Regularization adds a penalty to large model coefficients and helps reduce the possibility of overfitting.
-
-The Ridge model was implemented with:
+The scripts expect these CICIDS CSV files:
 
 ```text
-alpha = 1.0
+Tuesday-WorkingHours.pcap_ISCX.csv
+Wednesday-workingHours.pcap_ISCX.csv
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv
+```
+
+The CSV files must contain a `Label` column. The dataset is not included in this repository because of its size and licensing/distribution constraints.
+
+By default, scripts look for the files in:
+
+```text
+D:\Python Class\Python Project
+```
+
+For another location, set `ML_DATA_DIR` before running a script.
+
+PowerShell:
+
+```powershell
+$env:ML_DATA_DIR = "D:\path\to\CICIDS\files"
+```
+
+## Installation
+
+Use Python 3.10 or newer and install the dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+The main dependencies are Pandas, NumPy, scikit-learn, and Matplotlib.
+
+## Running the Models
+
+Run a script from the repository root. For example:
+
+```powershell
+python ".\Logistic Regression\LogR_0.2_Code.py"
+python ".\Ridge Regression\RR_0.2_Code.py"
+```
+
+The complete script naming pattern is:
+
+```text
+Logistic Regression/LogR_{0.2,0.4,0.6}_Code.py
+Linear Regression/LR_{0.2,0.4,0.6}_Code.py
+Ridge Regression/RR_{0.2,0.4,0.6}_Code.py
+Lasso Regression/LosR_{0.2,0.4,0.6}_Code.py
+Elastic Net/EN_{0.2,0.4,0.6}_Code.py
+```
+
+Each script prints:
+
+- Confusion matrix
+- Accuracy
+- Weighted precision
+- Weighted recall
+- Weighted F1 score
+- Classification report
+
+## Preprocessing
+
+The scripts use the following pipeline:
+
+1. Combine the three CSV files.
+2. Strip whitespace from column names.
+3. Separate the `Label` target column from the features.
+4. Convert feature values to numeric values; invalid values become missing values.
+5. Replace positive and negative infinity with missing values.
+6. Encode target labels with `LabelEncoder`.
+7. Split the data with a fixed random seed and stratification.
+8. Fit mean imputation and standard scaling on the training data only.
+9. Train the selected classifier and evaluate it on the test data.
+
+Keeping imputation and scaling inside the scikit-learn pipeline prevents test-set information from leaking into training.
+
+## Results
+
+The repository includes refreshed PNG outputs and the consolidated [Excel results workbook](Output%20of%20All%20ML%20Algo.xlsx). Results depend on the exact source CSV files, preprocessing settings, train/test split, and installed package versions. The committed outputs should therefore be treated as the results for the dataset and settings used to generate them, not as universal benchmark scores.
+
+## Limitations
+
+- The raw CICIDS CSV files are not included.
+- The scripts use a random stratified holdout rather than cross-validation or hyperparameter search.
+- Network captures can contain related flows across the train and test partitions, which may make holdout performance optimistic.
+- The folders named Linear, Lasso, and Elastic Net contain classification implementations using SGD-based estimators because the target is categorical.
+
+## License and Dataset Notice
+
+This repository is intended for educational and comparative machine-learning work. Check the original CICIDS dataset terms before redistributing the raw data or derived materials.
